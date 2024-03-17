@@ -6,7 +6,8 @@ import random
 
 def plot_subdivision(subdivision, points):
     patches = []
-    for poly in subdivision:
+    for trapezoid in subdivision:
+        poly = [trapezoid.top_left, trapezoid.top_right, trapezoid.bottom_right, trapezoid.bottom_left]
         polygon = Polygon(poly, closed=True, edgecolor='black', facecolor='none')
         patches.append(polygon)
     fig, ax = plt.subplots()
@@ -19,17 +20,6 @@ def plot_subdivision(subdivision, points):
     plt.gca().set_aspect('equal', adjustable='box')
     plt.show()
 
-def trapezoidal_decomposition(subdivision, point):
-    for poly in subdivision:
-        vertices = np.array(poly)
-        v0, v1, v2 = vertices
-        b0 = np.cross(v1 - v0, point - v0) >= 0
-        b1 = np.cross(v2 - v1, point - v1) >= 0
-        b2 = np.cross(v0 - v2, point - v2) >= 0
-        if b0 and b1 and b2:
-            return True
-    return False
-
 def check_all_points(points, subdivision):
     for point in points:
         if trapezoidal_decomposition(subdivision, point):
@@ -37,16 +27,31 @@ def check_all_points(points, subdivision):
         else:
             print("The point [" , point[0] , " , " , point[1] , "] is outside the subdivision.")
 
+class Trapezoid:
+    def __init__(self, top_left, top_right, bottom_left, bottom_right):
+        self.top_left = top_left
+        self.top_right = top_right
+        self.bottom_left = bottom_left
+        self.bottom_right = bottom_right
 
+def trapezoidal_decomposition(subdivision, query_point):
+    # Perform simple linear search through trapezoids
+    for trapezoid in subdivision:
+        if (query_point[0] >= trapezoid.bottom_left[0] and
+            query_point[0] <= trapezoid.bottom_right[0] and
+            query_point[1] >= trapezoid.bottom_left[1] and
+            query_point[1] <= trapezoid.top_left[1]):
+            return trapezoid
+    return None
 
+# Example input: a simple subdivision with two trapezoids
+trapezoid1 = Trapezoid((0, 1), (3, 1), (0, 0), (3, 0))
+trapezoid2 = Trapezoid((3, 3), (6, 3), (3, 1), (6, 1))
+subdivision = [trapezoid1, trapezoid2]
 
-
-
-# Example input: a simple subdivision with two triangles
-subdivision = [[[0, 0], [1, 1], [2, 0]], [[1, 1], [2, 2], [2, 0]]]
 points = []
 for i in range(10):
-    point = np.array([random.uniform(0, 3), random.uniform(0,3)])  # Point to test
+    point = np.array([random.uniform(0, 6), random.uniform(0,3)])  # Point to test
     points.append(point)
 
 # Plot the subdivision
