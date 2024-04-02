@@ -114,16 +114,7 @@ def get_left_edge(vertices: List[Point]):
         if v.x < left_bound.x:
             left_bound = v
     return Edge(Point(left_bound.x, MIN_Y), Point(left_bound.x, MAX_Y))
-# def decompose(polygon: Polygon):
-#     upper_edge = polygon.get_upper_bound()
-#     lower_edge = polygon.get_lower_bound()
-#     right_edge = polygon.get_right_bound()
-#     left_edge = polygon.get_left_bound()
-#     root = Root(polygon.get_med(), )
-#     return Tree(root)
 
-# def decompose_trapezoids(polygon):
-#     return Leaf()
 
 def decompose_root(edges: List[Edge], vertices: List[Point], lower_edge: Edge, upper_edge: Edge, right_edge: Edge, left_edge: Edge):
     med = get_med(vertices)
@@ -150,7 +141,7 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
         if e.start.y <= lower_edge.start.y and e.end.y >= upper_edge.start.y:
             split_edge = e
             break
-        if ((e.start.y > lower_edge.start.y and e.start.y < upper_edge.start.y) or (e.end.y > lower_edge.start.y and e.end.y < upper_edge.start.y)) and (e.start.x ):
+        if ((e.start.y > lower_edge.start.y and e.start.y < upper_edge.start.y) or (e.end.y > lower_edge.start.y and e.end.y < upper_edge.start.y)):
             inner_point = True
     if split_edge == None:
         if(inner_point == False):
