@@ -83,9 +83,10 @@ class Trapezoid:
     
     def display(self):
         print("\nTRAPEZOID")
-        for e in edges:
+        for e in self.edges:
             e.print()
         plot_trapezoid(self.edges)
+        #plt.show()
        
 def get_med(vertices):
         median = (vertices[len(vertices) - 1].y + vertices[0].y) / 2.0
@@ -178,7 +179,7 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
             e.print()
             if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
                 left_verts.append(e.start)
-            if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
+            if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end)):
                 left_verts.append(e.end)
         if e.start.x > split_edge.start.x or e.start.x > split_edge.end.x or e.end.x > split_edge.start.x or e.end.x > split_edge.end.x:
             print("RIGHT")
@@ -188,7 +189,7 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
                 right_verts.append(e.start)
             if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end)):
                 right_verts.append(e.end)
-    return Leaf(right = decompose_leaves(right_edges, right_verts, lower_edge, upper_edge, split_edge, left_edge), left = decompose_leaves(left_edges, left_verts, lower_edge, upper_edge, right_edge, split_edge), split_edge=split_edge)
+    return Leaf(right = decompose_leaves(edges=right_edges, vertices=right_verts, lower_edge=lower_edge, upper_edge=upper_edge, left_edge=split_edge, right_edge=right_edge), left = decompose_leaves(edges=left_edges, vertices=left_verts, lower_edge=lower_edge, upper_edge=upper_edge, left_edge=left_edge, right_edge=split_edge), split_edge=split_edge)
     
 def plot_plane(vertices, points):
     x = [v.x for v in vertices]
@@ -212,10 +213,19 @@ def plot_plane(vertices, points):
     plt.ylabel('Y')
     plt.title('Polygon')
     plt.grid(True)
-    plt.axis('equal')
+    plt.xlim(MIN_X-1, MAX_X)
+    plt.ylim(MIN_Y-1, MAX_Y)
+    #plt.show()
 
 
 def plot_trapezoid(edges: List[Edge]):
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title('Polygon')
+    plt.xlim(MIN_X-1, MAX_X)
+    plt.ylim(MIN_Y-1, MAX_Y)
+    plt.grid(True)
     for e in edges:
         plt.plot([e.start.x, e.end.x], [e.start.y, e.end.y], linestyle='-')
 
