@@ -7,50 +7,7 @@ MIN_X = 0
 MAX_X = 7
 MIN_Y = 0
 MAX_Y = 7
-
-# class Polygon:
-#     def __init__(self, vertices):
-#         self.vertices = []
-#         for i in range(len(vertices)):
-#             self.vertices.append(Point(vertices[i][0], vertices[i][1]))
-#         self.edges = []
-#         for i in range(len(self.vertices)):
-#             self.edges.append(Edge(self.vertices[i], self.vertices[(i+1)%len(self.vertices)]))
-            
-#         vert_sort(self.vertices)
-#         for v in self.vertices:
-#             v.print()
-#         for e in self.edges:
-#             e.print()
-            
-#     def get_med(self):
-#         median = (self.vertices[len(self.vertices) - 1].y + self.vertices[0].y) / 2.0
-#         med_point = self.vertices[0]
-#         for v in range(1, len(self.vertices)): 
-#             if abs(med_point.y - median) > abs(self.vertices[v].y - median):
-#                 med_point = self.vertices[v]
-#         return Edge(Point(MIN_X, med_point.y), Point(MAX_X, med_point.y))
-    
-#     def get_upper_bound(self):
-#         return Edge(Point(MIN_X, self.vertices[len(self.vertices) - 1].y), Point(MAX_X, self.vertices[len(self.vertices) - 1].y))
-    
-#     def get_lower_bound(self):
-#         return Edge(Point(MIN_X, self.vertices[0].y), Point(MAX_X, self.vertices[0].y))
-    
-#     def get_right_bound(self):
-#         right_bound = self.vertices[0]
-#         for v in range(1, len(self.vertices)): 
-#             if v.x >= right_bound.x:
-#                 right_bound = v
-#         return Edge(Point(right_bound.x, MIN_Y), Point(right_bound.x, MAX_Y))
-#     def get_left_bound(self):
-#         left_bound = self.vertices[0]
-#         for v in range(1, len(self.vertices)): 
-#             if v.x < left_bound.x:
-#                 left_bound = v
-#         return Edge(Point(left_bound.x, MIN_Y), Point(left_bound.x, MAX_Y))
-            
-                
+      
 
 class Point:
     def __init__(self, x: float, y: float) -> None:
@@ -78,14 +35,14 @@ class Edge:
         print(" -> ")
         self.end.print()
         
-    def is_not_above(self, point: Point):
-        if point.y <= self.end.y:
-            return True
-        return False
-    def is_not_below(self, point: Point):
-        if point.y >= self.start.y:
-            return True
-        return False
+    # def starts_below(self, point: Point):
+    #     if point.y >= self.start.y:
+    #         return True
+    #     return False
+    # def ends_above(self, point: Point):
+    #     if point.y <= self.end.y:
+    #         return True
+    #     return False
     
 
 class Leaf:
@@ -118,15 +75,17 @@ class Tree:
     def display(self):
         print("ROOT -> ")
         self.root.display()
+        plt.show()
 
 class Trapezoid:
     def __init__(self, edges: List[Edge]) -> None:
         self.edges = edges
     
     def display(self):
-        print("TRAPEZOID : ")
-        for e in self.edges:
-            e.print()      
+        print("\nTRAPEZOID")
+        for e in edges:
+            e.print()
+        plot_trapezoid(self.edges)
        
 def get_med(vertices):
         median = (vertices[len(vertices) - 1].y + vertices[0].y) / 2.0
@@ -172,9 +131,9 @@ def decompose_root(edges: List[Edge], vertices: List[Point], lower_edge: Edge, u
     lower_v = []
     upper_v = []
     for e in edges:
-        if e.is_not_above(med.start):
+        if e.start.y < med.start.y:
             lower.append(e)
-        if e.is_not_below(med.start):
+        if e.end.y > med.start.y:
             upper.append(e)
     for v in vertices:
         if v.is_below(med.start):
@@ -189,28 +148,47 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
     split_edge = None
     inner_point = False
     for e in edges:
-        if e.is_not_above(lower_edge.start) and e.is_not_below(upper_edge.start):
+        if e.start.y <= lower_edge.start.y and e.end.y >= upper_edge.start.y:
+            # print("UPPER ", upper_edge.start.x, " , ", upper_edge.start.y)
+            # print("LOWER ", lower_edge.start.x, " , ", lower_edge.start.y)
+            # e.print()
             split_edge = e
             break
-        if e.is_not_below(lower_edge.start) or e.is_not_above(upper_edge.start):
+        if (e.start.y > lower_edge.start.y and e.start.y < upper_edge.start.y) or (e.end.y > lower_edge.start.y and e.end.y < upper_edge.start.y):
             print("FUCKER")
             e.print()
             inner_point = True
     if split_edge == None:
         if(inner_point == False):
-            return Trapezoid(edges)
+            return Trapezoid([lower_edge, left_edge, upper_edge, right_edge])
         else:
             return decompose_root(edges, vertices, lower_edge, upper_edge, right_edge, left_edge)
     print("SPLIT")
     split_edge.print()
     right_edges = []
+    right_verts = []
     left_edges = []
+    left_verts = []
     for e in edges:
+        if e == split_edge:
+            continue
         if e.start.x < split_edge.start.x or e.start.x < split_edge.end.x or e.end.x < split_edge.start.x or e.end.x < split_edge.end.x:
-            right_edges.append(e)
-        if e.start.x > split_edge.start.x or e.start.x > split_edge.end.x or e.end.x > split_edge.start.x or e.end.x > split_edge.end.x:
             left_edges.append(e)
-    return Leaf(decompose_leaves(right_edges, vertices, lower_edge, upper_edge, split_edge, left_edge), decompose_leaves(left_edges, vertices, lower_edge, upper_edge, right_edge, split_edge))
+            print("LEFT")
+            e.print()
+            if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
+                left_verts.append(e.start)
+            if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
+                left_verts.append(e.end)
+        if e.start.x > split_edge.start.x or e.start.x > split_edge.end.x or e.end.x > split_edge.start.x or e.end.x > split_edge.end.x:
+            print("RIGHT")
+            e.print()
+            right_edges.append(e)
+            if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
+                right_verts.append(e.start)
+            if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end)):
+                right_verts.append(e.end)
+    return Leaf(right = decompose_leaves(right_edges, right_verts, lower_edge, upper_edge, split_edge, left_edge), left = decompose_leaves(left_edges, left_verts, lower_edge, upper_edge, right_edge, split_edge), split_edge=split_edge)
     
 def plot_plane(vertices, points):
     x = [v.x for v in vertices]
@@ -232,10 +210,14 @@ def plot_plane(vertices, points):
     plt.gca().set_aspect('equal', adjustable='box')
     plt.xlabel('X')
     plt.ylabel('Y')
-    plt.title('Polygon with Diagonals')
+    plt.title('Polygon')
     plt.grid(True)
     plt.axis('equal')
-    plt.show()
+
+
+def plot_trapezoid(edges: List[Edge]):
+    for e in edges:
+        plt.plot([e.start.x, e.end.x], [e.start.y, e.end.y], linestyle='-')
 
 def vert_sort(arr):
     for i in range(1, len(arr)):
@@ -248,8 +230,8 @@ def vert_sort(arr):
     
         
 
-vertices = [Point(0, 0), Point(0.5, 1), Point(1, 1.5), Point(2, 2), Point(2.5, 0.8), Point(3.2, 0.2)]
-edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[1])]
+vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
+edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
 
 # rect = [(0, 0), (0.5, 1), (1, 1.5), (2, 2), (2.5, 0.8), (3.2, 0.2)]
 # diags = [(rect[0], rect[3])]
