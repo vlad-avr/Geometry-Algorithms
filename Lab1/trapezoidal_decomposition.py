@@ -141,8 +141,6 @@ def decompose_root(edges: List[Edge], vertices: List[Point], lower_edge: Edge, u
             lower_v.append(v)
         else:
             upper_v.append(v)
-    print("MED")
-    med.print()
     return Root(decompose_leaves(lower, lower_v, lower_edge, med, right_edge, left_edge), decompose_leaves(upper, upper_v, med, upper_edge, right_edge, left_edge))
 
 def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge, upper_edge: Edge, right_edge: Edge, left_edge: Edge):
@@ -150,14 +148,9 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
     inner_point = False
     for e in edges:
         if e.start.y <= lower_edge.start.y and e.end.y >= upper_edge.start.y:
-            # print("UPPER ", upper_edge.start.x, " , ", upper_edge.start.y)
-            # print("LOWER ", lower_edge.start.x, " , ", lower_edge.start.y)
-            # e.print()
             split_edge = e
             break
         if (e.start.y > lower_edge.start.y and e.start.y < upper_edge.start.y) or (e.end.y > lower_edge.start.y and e.end.y < upper_edge.start.y):
-            print("FUCKER")
-            e.print()
             inner_point = True
     if split_edge == None:
         if(inner_point == False):
@@ -175,15 +168,11 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
             continue
         if e.start.x < split_edge.start.x or e.start.x < split_edge.end.x or e.end.x < split_edge.start.x or e.end.x < split_edge.end.x:
             left_edges.append(e)
-            print("LEFT")
-            e.print()
             if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
                 left_verts.append(e.start)
             if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end)):
                 left_verts.append(e.end)
         if e.start.x > split_edge.start.x or e.start.x > split_edge.end.x or e.end.x > split_edge.start.x or e.end.x > split_edge.end.x:
-            print("RIGHT")
-            e.print()
             right_edges.append(e)
             if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
                 right_verts.append(e.start)
@@ -195,17 +184,6 @@ def plot_plane(vertices, points):
     x = [v.x for v in vertices]
     y = [v.y for v in vertices]
     plt.plot(x + [x[0]], y + [y[0]], 'b-') 
-    # for diag in diags:
-    #     plt.plot([diag[0][0], diag[1][0]], [diag[0][1], diag[1][1]], 'b-')
-    # patches = []
-    # poly = rect
-    # polygon = Polygon(poly, closed=True, edgecolor='black', facecolor='none')
-    # patches.append(polygon)
-    # fig, ax = plt.subplots()
-    # p = PatchCollection(patches, match_original=True)
-    # ax.add_collection(p)
-    # ax.autoscale_view()
-    # ax.set_aspect('equal', adjustable='box')
     for point in points:
         plt.scatter(point[0], point[1], color="red", label="Point")
     plt.gca().set_aspect('equal', adjustable='box')
@@ -240,11 +218,11 @@ def vert_sort(arr):
     
         
 
+# vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
+# edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
 vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
-edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
+edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[3], vertices[1]), Edge(vertices[4], vertices[0])]
 
-# rect = [(0, 0), (0.5, 1), (1, 1.5), (2, 2), (2.5, 0.8), (3.2, 0.2)]
-# diags = [(rect[0], rect[3])]
 points = []
 for i in range(5):
     point = np.array([random.uniform(0, 6), random.uniform(0,3)])  # Point to test
@@ -253,5 +231,3 @@ plot_plane(vertices, points)
 vert_sort(vertices)
 tree = Tree(decompose_root(edges, vertices, get_lower_edge(vertices), get_upper_edge(vertices), get_right_edge(vertices), get_left_edge(vertices)))
 tree.display()
-# polygon = Polygon(rect)
-# polygon.get_med().print()
