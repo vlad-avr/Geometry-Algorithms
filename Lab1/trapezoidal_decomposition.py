@@ -150,15 +150,13 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
         if e.start.y <= lower_edge.start.y and e.end.y >= upper_edge.start.y:
             split_edge = e
             break
-        if (e.start.y > lower_edge.start.y and e.start.y < upper_edge.start.y) or (e.end.y > lower_edge.start.y and e.end.y < upper_edge.start.y):
+        if ((e.start.y > lower_edge.start.y and e.start.y < upper_edge.start.y) or (e.end.y > lower_edge.start.y and e.end.y < upper_edge.start.y)) and (e.start.x ):
             inner_point = True
     if split_edge == None:
         if(inner_point == False):
             return Trapezoid([lower_edge, left_edge, upper_edge, right_edge])
         else:
             return decompose_root(edges, vertices, lower_edge, upper_edge, right_edge, left_edge)
-    print("SPLIT")
-    split_edge.print()
     right_edges = []
     right_verts = []
     left_edges = []
