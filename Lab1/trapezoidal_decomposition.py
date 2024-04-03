@@ -138,11 +138,19 @@ def get_left_edge(vertices: List[Point]):
             left_bound = v
     return Edge(Point(left_bound.x, MIN_Y), Point(left_bound.x, MAX_Y))
 
-def is_not_right(p: Point, e: Edge):
+def is_left(p: Point, e: Edge):
     vec1 = Point(e.end.x - e.start.x, e.end.y - e.start.y)
     vec2 = Point(p.x - e.start.x, p.y - e.start.y)
     cross = vec1.x * vec2.y - vec1.y * vec2.x
     if cross > 0:
+        return -1 #left
+    elif cross < 0:
+        return 1 #right
+    else:
+        return 0
+def is_not_right(p: Point, e: Edge):
+    res = is_left(p, e)
+    if res == -1 or res == 0:
         return True
     else:
         return False
@@ -186,24 +194,45 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
     for e in edges:
         if e == split_edge:
             continue
-        if e.start.x < split_edge.start.x or e.start.x < split_edge.end.x or e.end.x < split_edge.start.x or e.end.x < split_edge.end.x:
-            left_edges.append(e)
-            if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not left_verts.__contains__(e.start)):
+        start_check = is_left(e.start, split_edge)
+        end_check = is_left(e.end, split_edge)
+        if start_check == -1:
+            if not left_edges.__contains__(e):
+                left_edges.append(e)
+            if e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not left_verts.__contains__(e.start):
                 left_verts.append(e.start)
-            if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not left_verts.__contains__(e.end)):
-                left_verts.append(e.end)
-        if e.start.x > split_edge.start.x or e.start.x > split_edge.end.x or e.end.x > split_edge.start.x or e.end.x > split_edge.end.x:
-            right_edges.append(e)
-            if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
+        elif start_check == 1:
+            if not right_edges.__contains__(e):
+                right_edges.append(e)
+            if e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start):
                 right_verts.append(e.start)
-            if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end)):
+        
+        if end_check == -1:
+            if not left_edges.__contains__(e):
+                left_edges.append(e)
+            if e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not left_verts.__contains__(e.end):
+                left_verts.append(e.end)
+        elif start_check == 1:
+            if not right_edges.__contains__(e):
+                right_edges.append(e)
+            if e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end):
                 right_verts.append(e.end)
+        
+        # if e.start.x < split_edge.start.x or e.start.x < split_edge.end.x or e.end.x < split_edge.start.x or e.end.x < split_edge.end.x:
+        #     left_edges.append(e)
+        #     if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not left_verts.__contains__(e.start)):
+        #         left_verts.append(e.start)
+        #     if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not left_verts.__contains__(e.end)):
+        #         left_verts.append(e.end)
+        # if e.start.x > split_edge.start.x or e.start.x > split_edge.end.x or e.end.x > split_edge.start.x or e.end.x > split_edge.end.x:
+        #     right_edges.append(e)
+        #     if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
+        #         right_verts.append(e.start)
+        #     if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end)):
+        #         right_verts.append(e.end)
     return Leaf(right = decompose_leaves(edges=right_edges, vertices=right_verts, lower_edge=lower_edge, upper_edge=upper_edge, left_edge=split_edge, right_edge=right_edge), left = decompose_leaves(edges=left_edges, vertices=left_verts, lower_edge=lower_edge, upper_edge=upper_edge, left_edge=left_edge, right_edge=split_edge), split_edge=split_edge)
     
 def plot_plane(edges, points):
-    # x = [v.x for v in vertices]
-    # y = [v.y for v in vertices]
-    # plt.plot(x + [x[0]], y + [y[0]], 'b-') 
     for e in edges:
         plt.plot([e.start.x, e.end.x], [e.start.y, e.end.y], 'b-')
     for point in points:
@@ -215,7 +244,7 @@ def plot_plane(edges, points):
     plt.grid(True)
     plt.xlim(MIN_X-1, MAX_X)
     plt.ylim(MIN_Y-1, MAX_Y)
-    plt.show()
+    #plt.show()
 
 
 def plot_trapezoid(edges: List[Edge]):
@@ -242,10 +271,12 @@ def vert_sort(arr):
 def run():
    # vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
-    # vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
-    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[3], vertices[1]), Edge(vertices[4], vertices[0])]
-    vertices = [Point(0, 0), Point(0.2, 3), Point(0.5, 2.5), Point(0.7, 2.8), Point(1, 2.3), Point(1.2, 2.7), Point(1.3, 0)]
-    edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
+    vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
+    edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[3], vertices[1]), Edge(vertices[4], vertices[0])]
+    # vertices = [Point(0, 0), Point(0.2, 3), Point(0.5, 2.5), Point(0.7, 2.8), Point(1, 2.3), Point(1.2, 2.7), Point(1.3, 0)]
+    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
+    # vertices = [Point(0, 0), Point(2, 5), Point(3, 3), Point(5, 4), Point(6, 1)]
+    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
     points = []
     for i in range(5):
         point = Point(random.uniform(0, 6), random.uniform(0,3))  # Point to test
