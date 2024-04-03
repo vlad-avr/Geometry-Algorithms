@@ -58,10 +58,13 @@ class Leaf:
             self.right.locate(p)
     
     def display(self):
-        print("LEFT -> ")
-        self.left.display()
-        print("RIGHT -> ")
-        self.right.display()
+        res = "[LeftRightNode([" + str(self.split_edge.start.x) + "," + str(self.split_edge.start.y) + "],[" + str(self.split_edge.end.x) + "," + str(self.split_edge.end.y)  + "]) -> Left : "
+        res += self.left.display()
+        res += " , Right : "
+        res += self.right.display()
+        res += "]"
+        return res
+        
     
 class Root:
     def __init__(self, lower: Leaf, upper: Leaf, med: int) -> None:
@@ -76,10 +79,13 @@ class Root:
             self.lower.locate(p)
         
     def display(self):
-        print("LOWER -> ")
-        self.lower.display()
-        print("UPPER -> ")
-        self.upper.display()
+        res = "[UpperLowerNode(" + str(self.med) + ") -> Upper : "
+        res += self.upper.display()
+        res += " , Lower : "
+        res += self.lower.display()
+        res += "]"
+        return res
+        
 
 class Tree:
     def __init__(self, root: Root) -> None:
@@ -89,8 +95,9 @@ class Tree:
         self.root.locate(p)
     
     def display(self):
-        print("ROOT -> ")
-        self.root.display()
+        res = "TREE:\n"
+        res += self.root.display()
+        print(res)
         plt.show()
 
 class Trapezoid:
@@ -105,10 +112,11 @@ class Trapezoid:
             e.print()
     
     def display(self):
-        print("\nTRAPEZOID")
+        res = "[Trapezoid -> "
         for e in self.edges:
-            e.print()
+            res += "([" + str(e.start.x) + "," + str(e.start.y) + "],[" + str(e.end.x) + "," + str(e.end.y)  + "]) "
         plot_trapezoid(self.edges)
+        return res
         #plt.show()
        
 def get_med(vertices):
