@@ -57,11 +57,11 @@ class Leaf:
         else:
             self.right.locate(p)
     
-    def display(self):
-        res = "[LeftRightNode([" + str(self.split_edge.start.x) + "," + str(self.split_edge.start.y) + "],[" + str(self.split_edge.end.x) + "," + str(self.split_edge.end.y)  + "]) -> Left : "
-        res += self.left.display()
+    def display(self, tabulation):
+        res = "\n" + tabulation  + "[LeftRightNode([" + str(self.split_edge.start.x) + "," + str(self.split_edge.start.y) + "],[" + str(self.split_edge.end.x) + "," + str(self.split_edge.end.y)  + "]) -> Left : "
+        res += self.left.display(tabulation + "\t")
         res += " , Right : "
-        res += self.right.display()
+        res += self.right.display(tabulation + "\t")
         res += "]"
         return res
         
@@ -78,11 +78,11 @@ class Root:
         else:
             self.lower.locate(p)
         
-    def display(self):
-        res = "[UpperLowerNode(" + str(self.med) + ") -> Upper : "
-        res += self.upper.display()
+    def display(self, tabulation):
+        res = "\n" + tabulation + "[UpperLowerNode(" + str(self.med) + ") -> Upper : "
+        res += self.upper.display(tabulation + "\t")
         res += " , Lower : "
-        res += self.lower.display()
+        res += self.lower.display(tabulation + "\t")
         res += "]"
         return res
         
@@ -95,8 +95,9 @@ class Tree:
         self.root.locate(p)
     
     def display(self):
+        tabulation = "\t"
         res = "TREE:\n"
-        res += self.root.display()
+        res += self.root.display(tabulation)
         print(res)
         plt.show()
 
@@ -111,8 +112,8 @@ class Trapezoid:
         for e in self.edges:
             e.print()
     
-    def display(self):
-        res = "[Trapezoid -> "
+    def display(self, tabulation):
+        res = "\n" + tabulation + "[Trapezoid -> "
         for e in self.edges:
             res += "([" + str(e.start.x) + "," + str(e.start.y) + "],[" + str(e.end.x) + "," + str(e.end.y)  + "]) "
         plot_trapezoid(self.edges)
@@ -220,7 +221,7 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
                 left_edges.append(e)
             if e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not left_verts.__contains__(e.end):
                 left_verts.append(e.end)
-        elif start_check == 1:
+        elif end_check == 1:
             if not right_edges.__contains__(e):
                 right_edges.append(e)
             if e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end):
@@ -279,12 +280,12 @@ def vert_sort(arr):
 def run():
    # vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
-    vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
-    edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[3], vertices[1]), Edge(vertices[4], vertices[0])]
+    # vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
+    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[3], vertices[1]), Edge(vertices[4], vertices[0])]
     # vertices = [Point(0, 0), Point(0.2, 3), Point(0.5, 2.5), Point(0.7, 2.8), Point(1, 2.3), Point(1.2, 2.7), Point(1.3, 0)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
-    # vertices = [Point(0, 0), Point(2, 5), Point(3, 3), Point(5, 4), Point(6, 1)]
-    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
+    vertices = [Point(0, 0), Point(2, 5), Point(3, 3), Point(5, 4), Point(6, 1)]
+    edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
     points = []
     for i in range(5):
         point = Point(random.uniform(0, 6), random.uniform(0,3))  # Point to test
