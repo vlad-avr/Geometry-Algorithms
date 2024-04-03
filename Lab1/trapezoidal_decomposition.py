@@ -282,10 +282,12 @@ def run():
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
     # vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[3], vertices[1]), Edge(vertices[4], vertices[0])]
-    vertices = [Point(0, 0), Point(0.2, 3), Point(0.5, 2.5), Point(0.7, 2.8), Point(1, 2.3), Point(1.2, 2.7), Point(1.3, 0)]
-    edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
+    # vertices = [Point(0, 0), Point(0.2, 3), Point(0.5, 2.5), Point(0.7, 2.8), Point(1, 2.3), Point(1.2, 2.7), Point(1.3, 0.2)]
+    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
     # vertices = [Point(0, 0), Point(2, 5), Point(3, 3), Point(5, 4), Point(6, 1)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
+    vertices = [Point(0, 0), Point(1, 5), Point(2, 3), Point(3, 4.5), Point(4, 4), Point(4.5, 5.5), Point(5, 0)]
+    edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
     points = []
     for i in range(5):
         point = Point(random.uniform(0, 6), random.uniform(0,3))  # Point to test
