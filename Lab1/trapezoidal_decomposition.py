@@ -4,9 +4,9 @@ import random
 from typing import List
 
 MIN_X = 0
-MAX_X = 7
+MAX_X = 700
 MIN_Y = 0
-MAX_Y = 7
+MAX_Y = 700
       
 
 class Point:
@@ -34,15 +34,6 @@ class Edge:
         self.start.print()
         print(" -> ")
         self.end.print()
-        
-    # def starts_below(self, point: Point):
-    #     if point.y >= self.start.y:
-    #         return True
-    #     return False
-    # def ends_above(self, point: Point):
-    #     if point.y <= self.end.y:
-    #         return True
-    #     return False
     
 
 class Leaf:
@@ -227,18 +218,6 @@ def decompose_leaves(edges: List[Edge], vertices: List[Point], lower_edge: Edge,
             if e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end):
                 right_verts.append(e.end)
         
-        # if e.start.x < split_edge.start.x or e.start.x < split_edge.end.x or e.end.x < split_edge.start.x or e.end.x < split_edge.end.x:
-        #     left_edges.append(e)
-        #     if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not left_verts.__contains__(e.start)):
-        #         left_verts.append(e.start)
-        #     if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not left_verts.__contains__(e.end)):
-        #         left_verts.append(e.end)
-        # if e.start.x > split_edge.start.x or e.start.x > split_edge.end.x or e.end.x > split_edge.start.x or e.end.x > split_edge.end.x:
-        #     right_edges.append(e)
-        #     if(e.start.y >= lower_edge.start.y and e.start.y <= upper_edge.start.y and not right_verts.__contains__(e.start)):
-        #         right_verts.append(e.start)
-        #     if(e.end.y >= lower_edge.start.y and e.end.y <= upper_edge.start.y and not right_verts.__contains__(e.end)):
-        #         right_verts.append(e.end)
     return Leaf(right = decompose_leaves(edges=right_edges, vertices=right_verts, lower_edge=lower_edge, upper_edge=upper_edge, left_edge=split_edge, right_edge=right_edge), left = decompose_leaves(edges=left_edges, vertices=left_verts, lower_edge=lower_edge, upper_edge=upper_edge, left_edge=left_edge, right_edge=split_edge), split_edge=split_edge)
     
 def plot_plane(edges, points):
@@ -282,15 +261,15 @@ def run():
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
     # vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[3], vertices[1]), Edge(vertices[4], vertices[0])]
-    # vertices = [Point(0, 0), Point(0.2, 3), Point(0.5, 2.5), Point(0.7, 2.8), Point(1, 2.3), Point(1.2, 2.7), Point(1.3, 0.2)]
-    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
     # vertices = [Point(0, 0), Point(2, 5), Point(3, 3), Point(5, 4), Point(6, 1)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
-    vertices = [Point(0, 0), Point(1, 5), Point(2, 3), Point(3, 4.5), Point(4, 4), Point(4.5, 5.5), Point(5, 0)]
-    edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
+    # vertices = [Point(0, 0), Point(1, 5), Point(2, 3), Point(3, 4.5), Point(4, 4), Point(4.5, 5.5), Point(5, 0)]
+    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
+    vertices = [Point(309, 347), Point(393, 100), Point(449, 184), Point(525, 84), Point(559, 230), Point(622, 136), Point(671, 392)]
+    edges = [Edge(vertices[0], vertices[6]), Edge(vertices[1], vertices[0]), Edge(vertices[6], vertices[5]), Edge(vertices[5], vertices[4]), Edge(vertices[4], vertices[3]), Edge(vertices[3], vertices[2]), Edge(vertices[2], vertices[1])]
     points = []
     for i in range(5):
-        point = Point(random.uniform(0, 6), random.uniform(0,3))  # Point to test
+        point = Point(random.uniform(MIN_X, MAX_X), random.uniform(MIN_Y,MAX_Y))  # Point to test
         points.append(point)
     plot_plane(edges, points)
     vert_sort(vertices)
