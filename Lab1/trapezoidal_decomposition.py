@@ -4,9 +4,9 @@ import random
 from typing import List
 
 MIN_X = 0
-MAX_X = 700
+MAX_X = 7
 MIN_Y = 0
-MAX_Y = 700
+MAX_Y = 7
       
 
 class Point:
@@ -257,20 +257,21 @@ def vert_sort(arr):
     
 
 def run():
-   # vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
-    # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
+    vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
+    edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
     # vertices = [Point(0, 1.5), Point(1, 3.5), Point(3.5, 4), Point(5, 2), Point(2.5, 0)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[3], vertices[1]), Edge(vertices[4], vertices[0])]
     # vertices = [Point(0, 0), Point(2, 5), Point(3, 3), Point(5, 4), Point(6, 1)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[0])]
     # vertices = [Point(0, 0), Point(1, 5), Point(2, 3), Point(3, 4.5), Point(4, 4), Point(4.5, 5.5), Point(5, 0)]
     # edges = [Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[3]), Edge(vertices[3], vertices[4]), Edge(vertices[4], vertices[5]), Edge(vertices[5], vertices[6]), Edge(vertices[6], vertices[0])]
-    vertices = [Point(309, 347), Point(393, 100), Point(449, 184), Point(525, 84), Point(559, 230), Point(622, 136), Point(671, 392)]
-    edges = [Edge(vertices[0], vertices[6]), Edge(vertices[1], vertices[0]), Edge(vertices[6], vertices[5]), Edge(vertices[5], vertices[4]), Edge(vertices[4], vertices[3]), Edge(vertices[3], vertices[2]), Edge(vertices[2], vertices[1])]
+    # vertices = [Point(309, 347), Point(393, 100), Point(449, 184), Point(525, 84), Point(559, 230), Point(622, 136), Point(671, 392)]
+    # edges = [Edge(vertices[0], vertices[6]), Edge(vertices[1], vertices[0]), Edge(vertices[6], vertices[5]), Edge(vertices[5], vertices[4]), Edge(vertices[4], vertices[3]), Edge(vertices[3], vertices[2]), Edge(vertices[2], vertices[1])]
     points = []
     for i in range(5):
         point = Point(random.uniform(MIN_X, MAX_X), random.uniform(MIN_Y,MAX_Y))  # Point to test
         points.append(point)
+    points.append(Point(0, 1.5))
     plot_plane(edges, points)
     vert_sort(vertices)
     tree = Tree(decompose_root(edges, vertices, get_lower_edge(vertices), get_upper_edge(vertices), get_right_edge(vertices), get_left_edge(vertices)))
