@@ -170,9 +170,10 @@ def search_region(tree: LRNode):
     tree.search(upper_bound=up, lower_bound=down, left_bound=left, right_bound=right, res=res)
     print("Points found after search: ")
     for p in res:
+        plt.scatter(p.x, p.y, color="green", label="Found Point")
         p.print()
     
-points = gen_points(8)
+points = gen_points(20)
 plot_points(points)
 tree = make_lr_node(points, left_bound=MIN_X, right_bound=MAX_X, lower_bound=MIN_Y, upper_bound=MAX_Y)
 print(tree.display("\t"))
