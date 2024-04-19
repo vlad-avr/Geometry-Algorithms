@@ -46,11 +46,11 @@ class UDNode:
         res += "]"
         return res
     def search(self, upper_bound: float, lower_bound: float, left_bound: float, right_bound: float, res: List[Point]):
-        if self.point.x > left_bound and self.point.x < right_bound and self.point.y > lower_bound and self.point.y < upper_bound:
+        if self.point.x >= left_bound and self.point.x <= right_bound and self.point.y >= lower_bound and self.point.y <= upper_bound:
             res.append(self.point)
-        if self.point.y > lower_bound:
+        if self.point.y >= lower_bound:
             self.down.search(upper_bound=upper_bound, lower_bound=lower_bound, left_bound=left_bound, right_bound=right_bound, res=res)
-        if self.point.y < upper_bound:
+        if self.point.y <= upper_bound:
             self.up.search(upper_bound=upper_bound, lower_bound=lower_bound, left_bound=left_bound, right_bound=right_bound, res=res)
     
         
@@ -71,11 +71,11 @@ class LRNode:
         return res
     
     def search(self, upper_bound: float, lower_bound: float, left_bound: float, right_bound: float, res: List[Point]):
-        if self.point.x > left_bound and self.point.x < right_bound and self.point.y > lower_bound and self.point.y < upper_bound:
+        if self.point.x >= left_bound and self.point.x <= right_bound and self.point.y >= lower_bound and self.point.y <= upper_bound:
             res.append(self.point)
-        if self.point.x > left_bound:
+        if self.point.x >= left_bound:
             self.left.search(upper_bound=upper_bound, lower_bound=lower_bound, left_bound=left_bound, right_bound=right_bound, res=res)
-        if self.point.x < right_bound:
+        if self.point.x <= right_bound:
             self.right.search(upper_bound=upper_bound, lower_bound=lower_bound, left_bound=left_bound, right_bound=right_bound, res=res)
         
 
@@ -88,25 +88,75 @@ class Leaf:
         return
         
         
-def sort_y(arr):
-    for i in range(1, len(arr)):
-        key = arr[i]
-        j = i - 1
-        while j >= 0 and arr[j].y > key.y:
-            arr[j + 1] = arr[j]
-            j -= 1
-        arr[j + 1] = key
+# def sort_y(arr):
+#     for i in range(1, len(arr)):
+#         key = arr[i]
+#         j = i - 1
+#         while j >= 0 and arr[j].y > key.y:
+#             arr[j + 1] = arr[j]
+#             j -= 1
+#         arr[j + 1] = key
         
-def sort_x(arr):
-    for i in range(1, len(arr)):
-        key = arr[i]
-        j = i - 1
-        while j >= 0 and arr[j].x > key.x:
-            arr[j + 1] = arr[j]
-            j -= 1
-        arr[j + 1] = key
+# def sort_x(arr):
+#     for i in range(1, len(arr)):
+#         key = arr[i]
+#         j = i - 1
+#         while j >= 0 and arr[j].x > key.x:
+#             arr[j + 1] = arr[j]
+#             j -= 1
+#         arr[j + 1] = key
         
-        
+
+def partitionY(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j].y <= pivot.y:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+def partitionX(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j].x <= pivot.x:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+def quickselect(arr, low, high, k, partition_func):
+    if low <= high:
+        pivot_index = partition_func(arr, low, high)
+        if pivot_index == k:
+            return arr[k]
+        elif pivot_index < k:
+            return quickselect(arr, pivot_index + 1, high, k, partition_func)
+        else:
+            return quickselect(arr, low, pivot_index - 1, k, partition_func)
+
+def compareY(point1: Point, point2: Point):
+    return abs(point1.y - point2.y)
+
+def compareX(point1: Point, point2: Point):
+    return abs(point1.x - point2.x)
+
+def find_closest_to_median(arr, partition_func, compare_func):
+    n = len(arr)
+    median_index = n // 2
+    median_value = quickselect(arr, 0, n - 1, median_index, partition_func)
+
+    closest = None
+    min_diff = float('inf')
+    for i in range(len(arr)):
+        diff = compare_func(arr[i], median_value)
+        if diff < min_diff:
+            min_diff = diff
+            closest = i
+    return closest
+
 def gen_points(num: int) -> List[Point]:
     points = []
     for i in range(num):
@@ -128,15 +178,17 @@ def plot_points(points: List[Point]):
 def make_lr_node(points: List[Point], left_bound: float, right_bound: float, lower_bound: float, upper_bound: float):
     if len(points) == 0:
         return Leaf
-    sort_x(points)
-    ind = math.floor(len(points)/2)
+    ind = find_closest_to_median(points, partitionX, compareX)
     med = Edge(Point(points[ind].x, lower_bound), Point(points[ind].x, upper_bound))
     l_points = []
     r_points = []
-    for i in range(0, ind):
-        l_points.append(points[i])
-    for i in range(ind+1, len(points)):
-        r_points.append(points[i])
+    for point in points:
+        if point.x < points[ind].x:
+            l_points.append(point)
+        elif point.x > points[ind].x:
+            r_points.append(point)
+        else:
+            continue
     return LRNode(med=med, point=points[ind],
                   left=make_ud_node(l_points, left_bound=left_bound, right_bound=med.start.x, lower_bound=lower_bound, upper_bound=upper_bound),
                   right=make_ud_node(r_points, left_bound=med.start.x, right_bound=right_bound, lower_bound=lower_bound, upper_bound=upper_bound))
@@ -144,24 +196,22 @@ def make_lr_node(points: List[Point], left_bound: float, right_bound: float, low
 def make_ud_node(points: List[Point], left_bound: float, right_bound: float, lower_bound: float, upper_bound: float):
     if len(points) == 0:
         return Leaf
-    sort_y(points)
-    ind = math.floor(len(points)/2)
+    ind = find_closest_to_median(points, partitionY, compareY)
     med = Edge(Point(left_bound, points[ind].y), Point(right_bound, points[ind].y))
     u_points = []
     d_points = []
-    for i in range(0, ind):
-        d_points.append(points[i])
-    for i in range(ind+1, len(points)):
-        u_points.append(points[i])
+    for point in points:
+        if point.y < points[ind].y:
+            d_points.append(point)
+        elif point.y > points[ind].y:
+            u_points.append(point)
+        else:
+            continue
     return UDNode(med=med, point = points[ind],
                     up=make_lr_node(u_points, lower_bound=med.start.y, upper_bound=upper_bound, left_bound=left_bound, right_bound=right_bound),
                     down=make_lr_node(d_points, lower_bound=lower_bound, upper_bound=med.start.y, right_bound=right_bound, left_bound=left_bound))
     
-def search_region(tree: LRNode):
-    right = 5
-    left = 1
-    up = 6
-    down = 1
+def search_region(tree: LRNode, right, left, up, down):
     plt.plot([right, left], [up, up], "r-")
     plt.plot([right, right], [up, down], "r-")
     plt.plot([right, left], [down, down], "r-")
@@ -177,5 +227,9 @@ points = gen_points(20)
 plot_points(points)
 tree = make_lr_node(points, left_bound=MIN_X, right_bound=MAX_X, lower_bound=MIN_Y, upper_bound=MAX_Y)
 print(tree.display("\t"))
-search_region(tree=tree)
+right = 5
+left = 1
+up = 6
+down = 1
+search_region(tree=tree, right=right, left=left, up=up, down=down)
 plt.show()
