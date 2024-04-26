@@ -143,19 +143,13 @@ def compareY(point1: Point, point2: Point):
 def compareX(point1: Point, point2: Point):
     return abs(point1.x - point2.x)
 
+
 def find_closest_to_median(arr, partition_func, compare_func):
     n = len(arr)
     median_index = n // 2
     median_value = quickselect(arr, 0, n - 1, median_index, partition_func)
-
-    closest = None
-    min_diff = float('inf')
-    for i in range(len(arr)):
-        diff = compare_func(arr[i], median_value)
-        if diff < min_diff:
-            min_diff = diff
-            closest = i
-    return closest
+    print(median_value.x, " : ", median_value.y)
+    return median_value
 
 def gen_points(num: int) -> List[Point]:
     points = []
@@ -178,36 +172,36 @@ def plot_points(points: List[Point]):
 def make_lr_node(points: List[Point], left_bound: float, right_bound: float, lower_bound: float, upper_bound: float):
     if len(points) == 0:
         return Leaf
-    ind = find_closest_to_median(points, partitionX, compareX)
-    med = Edge(Point(points[ind].x, lower_bound), Point(points[ind].x, upper_bound))
+    med_point = find_closest_to_median(points, partitionX, compareX)
+    med = Edge(Point(med_point.x, lower_bound), Point(med_point.x, upper_bound))
     l_points = []
     r_points = []
     for point in points:
-        if point.x < points[ind].x:
+        if point.x < med_point.x:
             l_points.append(point)
-        elif point.x > points[ind].x:
+        elif point.x > med_point.x:
             r_points.append(point)
         else:
             continue
-    return LRNode(med=med, point=points[ind],
+    return LRNode(med=med, point=med_point,
                   left=make_ud_node(l_points, left_bound=left_bound, right_bound=med.start.x, lower_bound=lower_bound, upper_bound=upper_bound),
                   right=make_ud_node(r_points, left_bound=med.start.x, right_bound=right_bound, lower_bound=lower_bound, upper_bound=upper_bound))
     
 def make_ud_node(points: List[Point], left_bound: float, right_bound: float, lower_bound: float, upper_bound: float):
     if len(points) == 0:
         return Leaf
-    ind = find_closest_to_median(points, partitionY, compareY)
-    med = Edge(Point(left_bound, points[ind].y), Point(right_bound, points[ind].y))
+    med_point = find_closest_to_median(points, partitionY, compareY)
+    med = Edge(Point(left_bound, med_point.y), Point(right_bound, med_point.y))
     u_points = []
     d_points = []
     for point in points:
-        if point.y < points[ind].y:
+        if point.y < med_point.y:
             d_points.append(point)
-        elif point.y > points[ind].y:
+        elif point.y > med_point.y:
             u_points.append(point)
         else:
             continue
-    return UDNode(med=med, point = points[ind],
+    return UDNode(med=med, point = med_point,
                     up=make_lr_node(u_points, lower_bound=med.start.y, upper_bound=upper_bound, left_bound=left_bound, right_bound=right_bound),
                     down=make_lr_node(d_points, lower_bound=lower_bound, upper_bound=med.start.y, right_bound=right_bound, left_bound=left_bound))
     
@@ -227,9 +221,9 @@ points = gen_points(20)
 plot_points(points)
 tree = make_lr_node(points, left_bound=MIN_X, right_bound=MAX_X, lower_bound=MIN_Y, upper_bound=MAX_Y)
 print(tree.display("\t"))
-right = 5
-left = 1
-up = 6
-down = 1
-search_region(tree=tree, right=right, left=left, up=up, down=down)
+right_x = 5
+left_x = 1
+up_y = 6
+down_y = 1
+search_region(tree=tree, right=right_x, left=left_x, up=up_y, down=down_y)
 plt.show()
