@@ -47,6 +47,7 @@ class Segment:
         self.end = end
         if self.start.y < self.end.y:
             self.start, self.end = self.end, self.start
+            self.start.name, self.end.name = self.end.name, self.start.name
         self.id = id
     
     def __str__(self):
@@ -232,6 +233,7 @@ def plane_sweep(segments, event_queue : List[SegPoint]):
             #Intersection
             s1 = status_queue.index(seg[0])
             s2 = status_queue.index(seg[1])
+            s1, s2 = min(s1, s2), max(s1, s2)
             status_queue[s1], status_queue[s2] = status_queue[s2], status_queue[s1]
             if s1-1 != -1:
                 sortinsert(status_queue[s1-1], status_queue[s1], intersections, event_queue, event)
