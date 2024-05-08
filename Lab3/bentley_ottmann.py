@@ -9,38 +9,51 @@ MAX_Y = 7
       
 
 class Point:
-    def __init__(self, x: float, y: float) -> None:
+    def __init__(self, x: float, y: float, name: str) -> None:
         self.x = x
         self.y = y
+        self.name = name
         
     def __str__(self):
-        return f"({self.x} , {self.y})"
+        return f"{self.name} : ({self.x} , {self.y})"
     
     def __eq__(self, other):
-        return self.x == other.x and self.y == other.y
+        return (self.x == other.x and self.y == other.y) or (self.name == other.name)
     
 class SegPoint:
     def __init__(self, point, segments) -> None:
         self.point = point
         self.seg = segments
+        if len(segments) == 1:
+            self.name = point.name
+        elif len(segments) == 2:
+            if segments[0].id > segments[1].id:
+                segments[0], segments[1] = segments[1], segments[0]
+            self.name = f"{segments[0].id}x{segments[1].id}"
+        else:
+            self.name = "null"
     def __str__(self) -> str:
         seg_str = ""
         for s in self.seg:
             seg_str += str(s)
-        return f"Segments {seg_str}\nPoint {self.point}"
+        return f"{self.name} : Segments {seg_str}\nPoint {self.point}"
     
     def __eq__(self, other):
-        return self.point == other.point
+        return (self.point == other.point) or (self.name == other.name)
         
 class Segment:
-    def __init__(self, start: Point, end: Point) -> None:
+    def __init__(self, start: Point, end: Point, id: int) -> None:
         self.start = start
         self.end = end
         if self.start.y < self.end.y:
             self.start, self.end = self.end, self.start
+        self.id = id
     
     def __str__(self):
-        return f"({self.start} -> {self.end})"
+        return f"(seg{self.id} : {self.start} -> {self.end})"
+    
+    def __eq__(self, other):
+        return self.id == other.id
     
 
 def quicksort(points):
@@ -99,7 +112,9 @@ def find_intersect(seg1: Segment, seg2: Segment):
     # Check if intersection point is within both line segments
     if (min(x1, x2) <= x <= max(x1, x2)) and (min(x3, x4) <= x <= max(x3, x4)) and \
        (min(y1, y2) <= y <= max(y1, y2)) and (min(y3, y4) <= y <= max(y3, y4)):
-        return Point(x, y)
+        a = min(seg1.id, seg2.id)
+        b = max(seg1.id, seg2.id)
+        return Point(x, y, f"{a}x{b}")
     else:
         return None  # Intersection point lies outside one or both segments
     
@@ -123,14 +138,14 @@ def sortinsert(seg1, seg2, intersections, event_queue, event):
                         elif event_queue[i-1].point.y >= segP.point.y and event_queue[i].point.y <= segP.point.y:
                             event_queue.insert(i, segP)
                             break
-                        elif i == len(event_queue):
+                        elif i == len(event_queue)-1:
                             event_queue.append(segP)
                         
                         
 def point_position_is_right(segment, point):
     # Calculate vectors
-    segment_vector = Point(segment.end.x - segment.start.x, segment.end.y - segment.start.y)
-    point_vector = Point(point.x - segment.start.x, point.y - segment.start.y)
+    segment_vector = Point(segment.end.x - segment.start.x, segment.end.y - segment.start.y, "")
+    point_vector = Point(point.x - segment.start.x, point.y - segment.start.y, "")
 
     # Calculate cross product
     cross_product = segment_vector.x * point_vector.y - segment_vector.y * point_vector.x
@@ -141,7 +156,7 @@ def point_position_is_right(segment, point):
         return False            
 
     
-def gen_segments(num: int):
+def gen_segments(num: int, precision: int):
     # segments = [Segment(Point(0.5, 5), Point(3.5, 6.5)), Segment(Point(1.9, 3.6), Point(2.1, 5.7)), Segment(Point(1.8, 0.3), Point(3.8, 5.8)), Segment(Point(1.2, 5.1), Point(6.1, 5.6))]
     segments = []
     points = []
@@ -149,7 +164,7 @@ def gen_segments(num: int):
     #     points.append(SegPoint(s.start, [s]))
     #     points.append(SegPoint(s.end, [s]))
     for i in range(num):
-        segments.append(Segment(Point(random.uniform(MIN_X, MAX_X), random.uniform(MIN_Y,MAX_Y)), Point(random.uniform(MIN_X, MAX_X), random.uniform(MIN_Y,MAX_Y))))
+        segments.append(Segment(Point(round(random.uniform(MIN_X, MAX_X), precision), round(random.uniform(MIN_Y,MAX_Y), precision), f"a{i}"), Point(round(random.uniform(MIN_X, MAX_X), precision), round(random.uniform(MIN_Y,MAX_Y), precision), f"b{i}"), i))
         points.append(SegPoint(segments[len(segments)-1].start, [segments[len(segments)-1]]))
         points.append(SegPoint(segments[len(segments)-1].end, [segments[len(segments)-1]]))
     quicksort(points)
@@ -159,6 +174,8 @@ def plot_segments(segments: List[Segment]):
     for segment in segments:
         plt.scatter(segment.start.x, segment.start.y, color="green", s=8)
         plt.scatter(segment.end.x, segment.end.y, color="green", s=8)
+        plt.text(segment.start.x, segment.start.y, segment.start.name, fontsize=8, ha='center', va='bottom')
+        plt.text(segment.end.x, segment.end.y, segment.end.name, fontsize=8, ha='center', va='bottom')
         plt.plot([segment.start.x, segment.end.x], [segment.start.y, segment.end.y], "b-")
     plt.gca().set_aspect('equal', adjustable='box')
     plt.xlabel('X')
@@ -231,12 +248,12 @@ def plane_sweep(segments, event_queue : List[SegPoint]):
         plt.plot([MIN_X, MAX_X], [event.point.y, event.point.y], "r-")
         for intersection in intersections:
             plt.scatter(intersection.x, intersection.y, s=20, color="red")
+            plt.text(intersection.x, intersection.y, intersection.name, fontsize=8, ha='center', va='bottom')
         plt.show()
     return intersections
     
-segments, points = gen_segments(10)
+segments, points = gen_segments(10, 3)
 
-print(point_position_is_right(segments[0], Point(3.8, 5.8)))
 for point in points:
     print(point.point)
 intersections = plane_sweep(segments, points)
