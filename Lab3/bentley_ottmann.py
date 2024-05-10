@@ -254,7 +254,7 @@ def plane_sweep(segments, event_queue : List[SegPoint]):
         plt.show()
     return intersections
     
-segments, points = gen_segments(20, 3)
+segments, points = gen_segments(10, 3)
 
 for point in points:
     print(point.point)
@@ -265,5 +265,6 @@ for inter in intersections:
 plot_segments(segments)
 for intersection in intersections:
     plt.scatter(intersection.x, intersection.y, s=20, color="red")
+    plt.text(intersection.x, intersection.y, intersection.name, fontsize=8, ha='center', va='bottom')
 plt.show()
     
