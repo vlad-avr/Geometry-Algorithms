@@ -53,6 +53,9 @@ public class HalfHull extends Tree<Point> {
 		// 	hull += point.toString();
 		// }
 		// System.out.println("HULL " + hull);
+		if(root == null){
+			return;
+		}
 		root.print("");
 	}
 

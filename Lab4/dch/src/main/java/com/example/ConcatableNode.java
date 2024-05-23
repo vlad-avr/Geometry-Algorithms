@@ -21,6 +21,7 @@ public class ConcatableNode extends Node<Point> {
 		this.right = right;
 		
 		hull = HullPart.bridge(left.hull, right.hull);
+		System.out.println(hull.toString());
 	}
 
 	public void print(String tab){
