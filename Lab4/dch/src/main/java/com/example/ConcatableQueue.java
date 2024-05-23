@@ -239,4 +239,5 @@ public class ConcatableQueue<E extends Comparable<E>> extends Tree<E>{
 			return qLeft;
 		}
 	}
+
 }

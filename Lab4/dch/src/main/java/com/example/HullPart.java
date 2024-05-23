@@ -135,4 +135,16 @@ public class HullPart extends ConcatableQueue<Point> {
 			return 0;
 		}
 	}
+
+	public String toString(){
+		String toPrint = "";
+		ArrayList<Point> hullList = getHull();
+		for(Point point : hullList){
+			toPrint += point.toString();
+			if(!point.equals(hullList.get(hullList.size()-1))){
+				toPrint += "---";
+			}
+		}
+		return toPrint;
+	}
 }

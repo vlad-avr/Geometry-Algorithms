@@ -1,6 +1,7 @@
 package com.example;
 
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Hello world!
@@ -13,7 +14,7 @@ public final class App {
         int winY = 350;
         int pointN = 20;
         int range = 50;
-        int time = 1000;
+        Scanner scan = new Scanner(System.in);
 
         Point[] points = new Point[pointN];
         Random r = new Random();
@@ -23,17 +24,21 @@ public final class App {
 
         Hull con = new Hull();
         for (Point point : points) {
+            System.out.println("Inserting : " + point.toString());
             con.insert(point);
+            con.print();
             con.showPlot(winX, winY);
-            Thread.sleep(time);
+            scan.nextLine();
         }
 
         for (Point point : points) {
+            System.out.println("Deleting : " + point.toString());
             con.delete(point);
+            con.print();
             con.showPlot(winX, winY);
-            Thread.sleep(time);
+            scan.nextLine();
         }
-
+        scan.close();
         System.out.println("Completed.");
     }
 }

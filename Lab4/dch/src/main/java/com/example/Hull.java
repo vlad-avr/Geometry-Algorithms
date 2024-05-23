@@ -22,6 +22,13 @@ public class Hull extends HalfHull {
         plotFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    public void print(){
+        System.out.println("TOP:");
+        topHullHalf.print();
+        System.out.println("BOTTOM:");
+        bottomHullHalf.print();
+    }
+
     @Override
     public void insert(Point e) {
         points.add(e);

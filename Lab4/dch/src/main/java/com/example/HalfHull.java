@@ -46,6 +46,16 @@ public class HalfHull extends Tree<Point> {
 		return tempCNode;
 	}
 
+	public void print(){
+		// String hull = "";
+		// ArrayList<Point> hullList = getHull();
+		// for(Point point : hullList){
+		// 	hull += point.toString();
+		// }
+		// System.out.println("HULL " + hull);
+		root.print("");
+	}
+
 	protected ConcatableNode addLeaf (Point c) {
 		size ++;
 		return new ConcatableNode(c);

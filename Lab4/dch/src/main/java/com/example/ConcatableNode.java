@@ -22,4 +22,29 @@ public class ConcatableNode extends Node<Point> {
 		
 		hull = HullPart.bridge(left.hull, right.hull);
 	}
+
+	public void print(String tab){
+		if(isLeaf){
+			System.out.println(tab + "LEAF (ex=" + ex + ")");
+			return;
+		}
+		String toPrint = tab + "NODE (leftMax=" + leftBranchMax.ex.toString();
+		if(hull != null){
+			toPrint += " hull : " + hull.toString();
+		}
+		toPrint += ") : ";
+		System.out.println(toPrint);	
+		if(left != null){
+			System.out.println(tab + "left -> ");
+			left.print(tab + "\t");
+		}
+		if(right != null){
+			System.out.println(tab + "right -> ");
+			right.print(tab + "\t");
+		}
+	}
+
+	public Point getEx(){
+		return this.ex;
+	}
 }
