@@ -20,9 +20,9 @@ public class HullPart extends ConcatableQueue<Point> {
 		double middleX = (lHull.maxNode.ex.x + rHull.minNode.ex.x)/2.0;
 		
 		while ( !done ) {
-			double t = computeSlope(lItr.leftBranchMax, rItr.leftBranchMax);
-			int iL = determineCase(lItr.leftBranchMax, t);
-			int iR = determineCase(rItr.leftBranchMax, t);
+			double t = getSlope(lItr.leftBranchMax, rItr.leftBranchMax);
+			int iL = check(lItr.leftBranchMax, t);
+			int iR = check(rItr.leftBranchMax, t);
 		
 			switch (iL) {
 			case -1:
@@ -37,9 +37,9 @@ public class HullPart extends ConcatableQueue<Point> {
 					}
 					case +1 : {
 						double lHeight = lItr.leftBranchMax.ex.y +
-								computeSlope(lItr.leftBranchMax, lItr.leftBranchMax.right) * (middleX - lItr.leftBranchMax.ex.x);
+								getSlope(lItr.leftBranchMax, lItr.leftBranchMax.right) * (middleX - lItr.leftBranchMax.ex.x);
 						double rHeight = rItr.leftBranchMax.ex.y +
-								computeSlope(rItr.leftBranchMax.left, rItr.leftBranchMax) * (middleX - rItr.leftBranchMax.ex.x);
+								getSlope(rItr.leftBranchMax.left, rItr.leftBranchMax) * (middleX - rItr.leftBranchMax.ex.x);
 						if (lHeight <= rHeight) {
 							rItr = rItr.left;
 						} else {
@@ -109,19 +109,19 @@ public class HullPart extends ConcatableQueue<Point> {
 		return res;
 	}
 	
-	protected static double computeSlope (Node<Point> leftN, Node<Point> rightN) {
+	protected static double getSlope (Node<Point> leftN, Node<Point> rightN) {
 		return (rightN.ex.y - leftN.ex.y)/(rightN.ex.x - leftN.ex.x);
 	}
 	
-	protected static int determineCase (Node<Point> n, double t) {
+	protected static int check (Node<Point> n, double t) {
 		boolean leftAbove = true;
 		boolean rightAbove = false;
 		
-		if ( (n.left != null) && computeSlope(n.left, n) < t  ) {
+		if ( (n.left != null) && getSlope(n.left, n) < t  ) {
 			leftAbove = false;
 		}
 		
-		if ( (n.right != null) && computeSlope(n, n.right) > t  ) {
+		if ( (n.right != null) && getSlope(n, n.right) > t  ) {
 			rightAbove = true;
 		}
 		

@@ -51,30 +51,30 @@ public class ConcatableQueue<E extends Comparable<E>> extends Tree<E>{
 		}
 	}
 
-	protected static <E extends Comparable<E>> Node<E> concatTree (Node<E> lN, Node<E> rN, int lH, int rH, Node<E> lMax) {
-		if (lN == null) {
-			return rN;
+	protected static <E extends Comparable<E>> Node<E> concatTree (Node<E> leftNode, Node<E> rightNode, int leftHeight, int rightHeight, Node<E> leftMax) {
+		if (leftNode == null) {
+			return rightNode;
 		}
-		else if (rN == null) {
-			return lN;
+		else if (rightNode == null) {
+			return leftNode;
 		}
-		else if (lH == rH) {
-			return new Node<>(lMax, lN, rN);
+		else if (leftHeight == rightHeight) {
+			return new Node<>(leftMax, leftNode, rightNode);
 		}
-		else if (lH > rH) {
-			lN.right = concatTree(lN.right, rN, lH-1, rH, lMax);
-			lN = fixUp(lN);
-			return lN;
+		else if (leftHeight > rightHeight) {
+			leftNode.right = concatTree(leftNode.right, rightNode, leftHeight-1, rightHeight, leftMax);
+			leftNode = fixUpdate(leftNode);
+			return leftNode;
 		}
 		else {
-			if (rN.left.color == RED) {
-				rN.left = concatTree(lN, rN.left, lH, rH, lMax);
-				rN = fixUp(rN);
+			if (rightNode.left.color == RED) {
+				rightNode.left = concatTree(leftNode, rightNode.left, leftHeight, rightHeight, leftMax);
+				rightNode = fixUpdate(rightNode);
 			}
 			else {
-				rN.left = concatTree(lN, rN.left, lH, rH-1, lMax);
+				rightNode.left = concatTree(leftNode, rightNode.left, leftHeight, rightHeight-1, leftMax);
 			}
-			return rN;
+			return rightNode;
 		}
 	}
 	

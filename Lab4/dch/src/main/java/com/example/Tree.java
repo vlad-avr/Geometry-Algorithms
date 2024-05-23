@@ -40,7 +40,7 @@ public class Tree<E extends Comparable<E>>{
 		n.right.color = !n.right.color;
 	}
 	
-	protected static <E extends Comparable<E>> Node<E> fixUp (Node<E> n) {
+	protected static <E extends Comparable<E>> Node<E> fixUpdate (Node<E> n) {
 		if (n.isLeaf) {
 			return n;
 		}

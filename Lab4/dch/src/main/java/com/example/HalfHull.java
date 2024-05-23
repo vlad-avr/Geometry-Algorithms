@@ -51,13 +51,13 @@ public class HalfHull extends Tree<Point> {
 		return new ConcatableNode(c);
 	}
 
-	protected static void flipTripleColor (ConcatableNode n) {
+	protected static void flipColor (ConcatableNode n) {
 		n.color = !n.color;
 		n.left.color = !n.left.color;
 		n.right.color = !n.right.color;
 	}
 	
-	protected static ConcatableNode fixUp (ConcatableNode n) {
+	protected static ConcatableNode fixUpdate (ConcatableNode n) {
 		if (n.isLeaf) {
 			return n;
 		}
@@ -70,7 +70,7 @@ public class HalfHull extends Tree<Point> {
 				n = rotateRight(n);
 			}
 			if (n.left.color == RED && n.right.color == RED) {
-				flipTripleColor(n);
+				flipColor(n);
 			}
 		}
 		return n;
@@ -105,7 +105,7 @@ public class HalfHull extends Tree<Point> {
 			}
 		}
 	
-		n = fixUp(n);
+		n = fixUpdate(n);
 		return n;
 	}
 	
@@ -137,11 +137,11 @@ public class HalfHull extends Tree<Point> {
 				UP(n);
 			}
 			else {
-				flipTripleColor(n);
+				flipColor(n);
 				n.left = deleteAt(n.left,e);
 				if (n.left.color == RED) {
 					UP(n);
-					flipTripleColor(n);
+					flipColor(n);
 				}
 				else if (n.right.left.color == BLACK) {
 					UP(n);
@@ -151,7 +151,7 @@ public class HalfHull extends Tree<Point> {
 					n.right = rotateRight(n.right);
 					UP(n);
 					n = rotateLeft(n);
-					flipTripleColor(n);
+					flipColor(n);
 				}
 			}
 		}
@@ -174,16 +174,16 @@ public class HalfHull extends Tree<Point> {
 			}
 			else if (n.color == RED) {
 				
-				flipTripleColor(n);
+				flipColor(n);
 				DOWN(n);
 				n.right = deleteAt(n.right,e);
 				UP(n);
 				if (n.right.color == RED) {
-					flipTripleColor(n);
+					flipColor(n);
 				}
 				else if (n.left.left.color == RED) {
 					n = rotateRight(n);
-					flipTripleColor(n);
+					flipColor(n);
 				}
 			}
 			else {
