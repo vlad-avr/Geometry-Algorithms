@@ -637,7 +637,7 @@ def gen_points(precision, num):
 #               Point(6, 10)]
 
 dynamicConvexHull = DynamicConvexHull()
-points = gen_points(3, 10)
+points = gen_points(3, 8)
 for point in points:
     figure, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
     axes.set_title("Add "+str(point))
