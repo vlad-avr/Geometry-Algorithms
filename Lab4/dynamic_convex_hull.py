@@ -105,7 +105,7 @@ class NodeData:
         return self.left_most_right_point < other.left_most_right_point
 
     def __repr__(self):
-        return str(f"[lMax={self.left_most_right_point}; points={self.points_array}; sep_ind={self.separating_index}")
+        return str(f"[lMax={self.left_most_right_point}; convex_hull={self.convex_hull}; sep_ind={self.separating_index}")
 
 
 class NodeColor(Enum):
@@ -139,10 +139,10 @@ class Node:
     
     def print(self, tabs):
         print(f"{tabs}Node {self}")
-        if self.left:
+        if self.left and (self.left.id != 0 and self.left.id != 1):
             print(f"{tabs}left -> ")
             self.left.print(tabs+"\t")
-        if self.right:
+        if self.right and (self.right.id != 0 and self.right.id != 1):
             print(f"{tabs}right -> ")
             self.right.print(tabs+"\t")
 
@@ -643,6 +643,7 @@ for point in points:
     axes.set_title("Add "+str(point))
     dynamicConvexHull.insert(point)
     dynamicConvexHull.plot(figure, axes)
+    print(f"\nInserting {point}")
     dynamicConvexHull.print()
     plt.show()
 points.reverse()
@@ -652,5 +653,6 @@ for point in points:
     axes.set_title("Delete "+str(point))
     dynamicConvexHull.delete(point)
     dynamicConvexHull.plot(figure, axes)
+    print(f"\nDeleting {point}")
     dynamicConvexHull.print()
     plt.show()
